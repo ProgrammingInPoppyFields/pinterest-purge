@@ -1,5 +1,7 @@
 # 📌 Pinterest Purge
 
+<img src="https://images.unsplash.com/photo-1591178761188-885caa0b4fc3?q=80&w=1758&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="hero" width="100%" style="height:300px;object-fit:cover;display:block;" />
+
 A simple Pinterest image downloader for **public boards** and **public board sections**.
 
 This project now uses **one merged script**:
@@ -158,9 +160,3 @@ python pinterest_purge_merged.py --url "https://www.pinterest.com/username/cool-
 ```
 
 ---
-
-## Recommendation
-
-Unless you specifically need the old versions for comparison, use:
-
-**`pinterest_purge_merged.py`**
