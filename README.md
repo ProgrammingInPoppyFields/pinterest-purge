@@ -8,13 +8,6 @@ This project now uses **one merged script**:
 
 - `pinterest_purge_merged.py` — downloads images from one or more Pinterest board or section URLs
 
-The older files were split versions:
-
-- `pinterest_purge_BY_BOARD.py` — older board-only version
-- `pinterest_purge_BY_SECTION.py` — older section-only version
-
-Most people should just use **`pinterest_purge_merged.py`**.
-
 Important note:
 - The script does not care whether a URL is a board or a section.
 - It simply opens the Pinterest page you give it and scrapes whatever pin images are loaded there.
