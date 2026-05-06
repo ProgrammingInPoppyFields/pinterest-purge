@@ -1,6 +1,6 @@
 # 📌 Pinterest Purge
 
-<img src="https://images.unsplash.com/photo-1591178761188-885caa0b4fc3?q=80&w=1758&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="hero" width="100%" style="height:300px;object-fit:cover;display:block;" />
+<img src="https://images.unsplash.com/photo-1591178761188-885caa0b4fc3?q=80&w=1758&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="hero" width="100%" style="height:auto;object-fit:cover;display:block;" />
 
 A simple Pinterest image downloader for **public boards** and **public board sections**.
 
@@ -35,31 +35,6 @@ It may not work for:
 - private boards
 - login-gated content
 - pages Pinterest changes in the future
-
----
-
-## Files in this folder
-
-### `pinterest_purge_merged.py`
-Use this one.
-
-Handles:
-- full boards
-- board sections
-- multiple URLs in one run
-
-Includes:
-- retries
-- deduping
-- safer filenames
-- better scrolling
-- command-line options
-
-### `pinterest_purge_BY_BOARD.py`
-Older script for downloading from an entire board.
-
-### `pinterest_purge_BY_SECTION.py`
-Older script for downloading from one or more board sections.
 
 ---
 
