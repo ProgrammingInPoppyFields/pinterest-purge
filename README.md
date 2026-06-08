@@ -2,15 +2,23 @@
 
 <img src="https://images.unsplash.com/photo-1591178761188-885caa0b4fc3?q=80&w=1758&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="hero" width="100%" style="height:auto;object-fit:cover;display:block;" />
 
-A simple Pinterest image downloader for **public boards** and **public board sections**.
+A Pinterest image downloader for **public boards** and **public board sections**.
 
-This project now uses **one merged script**:
+This project uses one merged script:
 
 - `pinterest_purge_merged.py` — downloads images from one or more Pinterest board or section URLs
 
-Important note:
-- The script does not care whether a URL is a board or a section.
-- It simply opens the Pinterest page you give it and scrapes whatever pin images are loaded there.
+---
+
+## How it works
+
+Instead of scraping the rendered page (which misses pins due to Pinterest's virtual scrolling), the script:
+
+1. Opens the board in Chrome with Selenium — just long enough to harvest session cookies and the board's internal numeric ID
+2. Calls Pinterest's internal `BoardFeedResource` JSON API directly, paginating through all pins using bookmark tokens
+3. Downloads the collected image URLs to disk
+
+This means it gets **all** pins in a board, not just the ones that happened to be visible on screen — and it only collects actual board pins, not profile pictures, suggested content, or anything else.
 
 ---
 
@@ -18,56 +26,53 @@ Important note:
 
 Given one or more Pinterest URLs, the script:
 
-- opens the page in Chrome using Selenium
-- scrolls to load more pins
-- finds Pinterest image URLs
-- upgrades them to higher-resolution originals when possible
-- downloads the images to a local folder
-- skips duplicates
+- uses Chrome to authenticate and extract the board ID
+- paginates Pinterest's internal API until all pins are collected
+- downloads images at 736x resolution (high quality, reliable)
+- falls back to `/originals/` if 736x returns a 403
+- skips images already saved from a previous run
 
-It works best for:
+It works for:
 
 - public Pinterest boards
 - public Pinterest sections inside boards
 
-It may not work for:
+It will not work for:
 
 - private boards
 - login-gated content
-- pages Pinterest changes in the future
 
 ---
 
 ## Requirements
 
-You need:
-
 - Python 3.10+
 - Google Chrome installed
-- Python packages:
-  - `selenium`
-  - `requests`
-
-Install the Python packages with:
+- Python packages: `selenium`, `requests`
 
 ```bash
 pip install -U selenium requests
 ```
 
-In most cases, you do **not** need to manually install ChromeDriver.
-Modern Selenium usually handles that automatically.
+Modern Selenium handles ChromeDriver automatically — no manual install needed in most cases.
 
 ---
 
 ## How to run
 
-### Download from one board
+### Download a whole board
 
 ```bash
 python pinterest_purge_merged.py --url "https://www.pinterest.com/username/board-name/"
 ```
 
-### Download from multiple sections
+### Download a board section
+
+```bash
+python pinterest_purge_merged.py --url "https://www.pinterest.com/username/board-name/section-name/"
+```
+
+### Download multiple sections into one folder
 
 ```bash
 python pinterest_purge_merged.py --url \
@@ -75,52 +80,36 @@ python pinterest_purge_merged.py --url \
   "https://www.pinterest.com/username/board-name/section-two/"
 ```
 
-### Show the browser window while it runs
+### Interactive mode (no arguments)
 
 ```bash
-python pinterest_purge_merged.py --url "PASTE_URL_HERE" --show-browser
+python pinterest_purge_merged.py
 ```
 
 ---
 
-## Useful options
+## Options
 
-### Choose output folder
-
-```bash
-python pinterest_purge_merged.py --url "PASTE_URL_HERE" --output-dir my_images
-```
-
-### Control scrolling
-
-```bash
-python pinterest_purge_merged.py --url "PASTE_URL_HERE" --max-scrolls 40 --scroll-pause 2.0
-```
+| Flag | Default | What it does |
+|---|---|---|
+| `--url` | *(prompted)* | One or more Pinterest board or section URLs |
+| `--output-dir` | `pinterest_downloads` | Folder to save images into |
+| `--auto-subdir` | off | Creates a subfolder named after the first URL (good for keeping multiple runs separate) |
+| `--show-browser` | off | Shows the Chrome window instead of running headless — useful for debugging |
+| `--timeout` | `30` | Per-image download timeout in seconds |
 
 ---
 
 ## Notes
 
-- The script downloads from **public Pinterest pages** only.
-- Board or section does not matter much to the scraper. It just opens the page and scrapes whatever images are there.
-- It is not perfect. You may get extra images, such as Pinterest recommendation content or other page images that happen to load.
-- It is also possible to miss some images if Pinterest does not load them, lazy-loads them differently, or changes the page structure.
-- Pinterest can change its site structure at any time, so scrapers like this can break.
-- If a page stops yielding new images, the script exits early instead of scrolling forever.
-- Re-running the script is usually safe because it deduplicates by image URL.
+- **Public pages only.** Private boards and login-gated content are not supported.
+- **`/originals/` often 403s** as of 2025. Images download at `736x` resolution with an automatic originals fallback.
+- **Re-running is safe.** Already-downloaded files are detected by filename and skipped.
+- **Pinterest can change their API.** If the script suddenly stops finding images, run with `--show-browser` to see what's happening, and check for script updates.
 
 ---
 
 ## Quick start
-
-1. Install Chrome
-2. Install Python packages
-3. Run the merged script with a board or section URL
-4. Check the output folder for downloaded images
-
----
-
-## Example
 
 ```bash
 pip install -U selenium requests
